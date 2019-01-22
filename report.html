@@ -13519,8 +13519,9 @@ Standard deviation of prices: $165171.13154429477
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
-<p>If training ratio is high, the model built fits all the training examples but may not perform well with the testing data. This will lead to overfitting.
-To prevent the problem of overfitting it is better to split dataset into training and testing.</p>
+<p>Data is split into training and testing data to avoid underfitting and overfitting i.e. to be able to check for generalization of trained model.</p>
+<p>If the model is too simple, it does not learn during training and does a poor job during testing. 
+If the model is trained by all the data, it basically memorizes the data. Hence, it may not be able to perform well on unseen data. Also, we will not be able to test and come up with evaluation since since we have used all the data for training.</p>
 
 </div>
 </div>
@@ -13600,7 +13601,7 @@ Think about the pros and cons of adding more training points based on if the tra
 <ul>
 <li>Max depth = 3</li>
 <li>The training curve score is decreases and test curve score increases with the addition of more training points</li>
-<li>Having more training points benifits the model to an extent. After a threshold, the training and testing curves converge to a value </li>
+<li>Having more training points benifits the model to an extent. After a threshold, the training and testing curves converge to a value.</li>
 </ul>
 
 </div>
@@ -13667,8 +13668,8 @@ Think about the pros and cons of adding more training points based on if the tra
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
 <ul>
-<li>With max depth 1, model is oversimplified and suffers from high bias. Both training &amp; validation scores are low.</li>
-<li>With max depth 10, model suffers from high variance. This means model overfits the data. We can see that the validation score curve shows decreasing trend and training score increases when max depth is increased beyond 4.</li>
+<li>With max depth 1, model is oversimplified and suffers from high bias. Both training &amp; validation scores are low. High bias can be fixed by learning more from data i.e. increasing the number of input features </li>
+<li>With max depth 10, model suffers from high variance. This means model overfits the data. We can see that the validation score curve shows decreasing trend and training score increases when max depth is increased beyond 4.High variance can be fixed either by getting more data or decreasing the number of features.</li>
 </ul>
 
 </div>
@@ -13724,8 +13725,17 @@ Think about the pros and cons of adding more training points based on if the tra
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
 <ul>
-<li>Grid search is a method to find the best combination of features (parameters). Basically we create number of models with different combinations of values of the features. A particular combination of values can be assumed to be a point on the grid. The different models created from grid search can be trained and evaluated using cross-validation.</li>
-<li>For example, if we are using a decision tree model, we can use different values for max_depth, min_samples_leaf i.e. max_depth = [1,2,3,4] and min_samples_split = [1,5,10,20,40,80]. Then using each combination of values from above two arrays, a new model will be built. For ex. (max_depth=2, min_samples_split=20) corresponds to a one of the models. Each such model will be trained and evaluated using cross-validation. The best model can be chosen.</li>
+<li>A hyperparameter is a parameter whose value is set before the learning process begins. The values of other parameters are derived via training. Grid search is a method to find the best combination of hyperparameters i.e. hyperparameter optimization. Basically we create a number of models with different combinations of values of the  hyperparameters. Grid search generates candidates from a grid of parameter values specified with the param_grid parameter.For example, params = [{'C': [1, 10, 100], 'kernel': ['linear']},{'C': [1, 10, 1000], 'gamma':[0.001, 0.0001], 'kernel': ['rbf']}] specifies that two grids should be explored: 
+-- one with a linear kernel and C values in [1, 10, 100]
+-- the second one with an RBF kernel, the cross-product of C values ranging in [1, 10, 1000] and gamma values in [0.001, 0.0001].</li>
+<li><p>Grid search then trains an the model with each combination in the cross-product of these hyperparameters and evaluates their performance on the cross-validation set. Finally, the grid search algorithm outputs the hyper-parameter combination that achieved the highest score in the validation procedure.</p>
+</li>
+<li><p>The parameters to the grid search are 
+  -- the estimator = estimation model used
+  -- param_grid = the dict of params and their list of values
+  -- scoring = Performance metric i.e. a function that quantifies model performance over training and testing sets. It basically tells how good a model is at making predictions. The performance metric will be different metrics i.e. r2 score, mean_squared_error etc. 
+  -- cv = Determines the cross-validation splitting strategy.</p>
+</li>
 </ul>
 
 </div>
@@ -13751,8 +13761,10 @@ Think about the pros and cons of adding more training points based on if the tra
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
 <ul>
-<li>k-fold cross validation training technique splits the data into k equals sized samples. Of the k samples, one of the samples is used as validation data and rest k-1 as training data. This process is repeated k times to makes sure that each of the k samples is used as validation data exactly once. The average of k results is returned as estimation.</li>
-<li>The benefit provided by k-fold cross-validation is that no part of the training data is lost by by further splitting it up, as all the k samples are used for training and testing.</li>
+<li>K-fold cross validation algorithm validation technique checks if a given algorithm will train properly or not. </li>
+<li>k-fold cv technique splits the training data into k-folds. Out of the k-folds, one is used for validation and rest k-1 for training. This process is repeated with each fold being one validation set. When you get different models from different folds you average out the evaluation metric of all the models to get an 'unbiased estimate of model generaliztion on unseen data'. </li>
+<li>Application to grid search: One hyperparameter combination from the grid is taken and kept constant for one round of  k-fold cross validation process. This helps in evaluate whether the given combination of hyperparameters is best for the particular data set or not. This process is repeated for all combinations of hyperparameters in the grid.</li>
+<li>Train-test split method for model evaluation or hyper parameters optimization has a risk. The data set may result in optimum hyper parameter combination which is good for only that particularly arranged training dataset. k-fold cv gets rid of this bias towards a specific arrangement and composition of data.</li>
 </ul>
 
 </div>
@@ -13787,7 +13799,7 @@ Think about the pros and cons of adding more training points based on if the tra
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[140]:</div>
+<div class="prompt input_prompt">In&nbsp;[148]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Import &#39;make_scorer&#39;, &#39;DecisionTreeRegressor&#39;, and &#39;GridSearchCV&#39;</span>
@@ -13851,7 +13863,7 @@ Think about the pros and cons of adding more training points based on if the tra
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[141]:</div>
+<div class="prompt input_prompt">In&nbsp;[149]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit the training data to the model using grid search</span>
@@ -13889,7 +13901,8 @@ Think about the pros and cons of adding more training points based on if the tra
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong> Hint: </strong> The answer comes from the output of the code snipped above.</p>
 <p><strong>Answer: </strong></p>
-<p>max_depth=5 from above snippet</p>
+<p>max_depth=5 from above snippet
+My guess for Q.6 was 4 which is close to the optimal model. I feel from complxity graph we get can get a rough idea about it.</p>
 
 </div>
 </div>
